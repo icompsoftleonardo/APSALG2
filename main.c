@@ -1,21 +1,76 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <locale.h>
-#include <stdlib.h>
-#include <string.h>
-//cabeçalhos
+#include<stdio.h>
+#include<stdlib.h>
+#include<windows.h>
+#include<mysql.h>
+#include<winsock2.h>
+#include<locale.h>
+#include<stdlib.h>
+#include<string.h>
+//constantes para efetuar login ao DB, utilizado o MYSQL do Xampp
+#define servidor "127.0.0.1"
+#define usuario "host" //por padrÃ£o o MYSQL vem com usuÃ¡rio Host
+#define senha "" //por padrÃ£o a senha vem vazia
+#define bd "APSALG2" //nome da base de dados
+//cabeï¿½alhos
 void Menu();
 void Salvar();
 void Cadastro_Cliente();
 void Limpar_Tela();
 void Orcamento();
 void Imprimir();
+    //var globais
+    char i_Nome[30];
+    char i_CPF[11];
+    char i_Cidade[30];
+    char i_Veiculo[20];
+    char i_DataNasc[8];
+    char i_Telefone[20];
+    //SQL PRA CRIAÃ‡ÃƒO DA TABELA
+    // CREATE TABLE `APSALG2`.`Clientes` CRIANDO TABELA CLIENTES
+    // ( `i_Nome` VARCHAR(255) NOT NULL, DECLARANDO A COLUNA "I_NOME" DO TIPO VARCHAR 255 CARACTERES NÃƒO NULO
+    // `i_CPF` VARCHAR(255) NOT NULL, DECLARANDO A COLUNA "I_CPF" DO TIPO VARCHAR 255 CARACTERES NÃƒO NULO
+    // `i_Cidade` VARCHAR(255) NOT NULL , DECLARANDO A COLUNA "I_CIDADE" DO TIPO VARCHAR 255 CARACTERES NÃƒO NULO
+    // `i_Veiculo` VARCHAR(255) NOT NULL , DECLARANDO A COLUNA "I_VEICULO" DO TIPO VARCHAR 255 CARACTERES NÃƒO NULO
+    // `i_DataNasc` VARCHAR(255) NOT NULL , DECLARANDO A COLUNA "I_DATANASC" DO TIPO VARCHAR 255 CARACTERES NÃƒO NULO
+    // `i_Telefone` VARCHAR(255) NOT NULL ); DECLARANDO A COLUNA "I_TELEFONE" DO TIPO VARCHAR 255 CARACTERES NÃƒO NULO
+
+int main (void){
+    //execuï¿½ao
 
 
-void opcao()//opçao para realizar um novo cadastro ou voltar ao menu inicial
+
+
+    Menu();
+    return 0;
+}
+
+
+void Salvar()//salvar cadastros realizados, colocado aqui pra deixar prÃ© carregando quando for chamado
+{
+    MYSQL conexao;
+    char res;
+    mysql_init(&conexao);
+    if(mysql_real_connect(&conexao, "127.0.0.1", "root", "", "APSALG2", 0, NULL, 0)){
+        printf("Conectado com sucesso!n");
+        res = mysql_query(&conexao,"INSERT INTO Clientes(i_Nome, i_CPF, i_Cidade, i_Veiculo, i_DataNasc, i_Telefone) values('leonardo', '212121', 'beltrao', 'fuke', 'sa', '1212121');");
+        if (!res){
+            printf("Registros inseridos %d", mysql_affected_rows(&conexao));
+        }
+        else{
+            printf("Erro na insercao %d : %s", mysql_errno(&conexao), mysql_error(&conexao));
+            mysql_close(&conexao);
+        }
+    }
+    else{
+        printf("Falha de conexao");
+        printf("Erro %d : %sn", mysql_errno(&conexao), mysql_error(&conexao));
+    }
+}
+
+void opcao()//opï¿½ao para realizar um novo cadastro ou voltar ao menu inicial
 {
     int l_op;
-    printf("Selecione a opção desejada:\n1-Realizar novo Cadastro:\n2-Voltar ao menu principal:\n");
+    printf("Selecione a opï¿½ï¿½o desejada:\n1-Realizar novo Cadastro:\n2-Voltar ao menu principal:\n");
         scanf("%d",&l_op);
         switch(l_op)
         {
@@ -28,15 +83,8 @@ void opcao()//opçao para realizar um novo cadastro ou voltar ao menu inicial
             Menu();
     }
 }
-//variaveis usadas varias vzs no programa
-char i_nome[30];
-char i_CPF[11];
-char i_Cidade[30];
-char i_Veiculo[20];
-char i_DataNasc[8];
-char i_Telefone[20];
 
-void Limpar_Tela()//limpar a tela a cada execução
+void Limpar_Tela()//limpar a tela a cada execuï¿½ï¿½o
 {
     system("cls");
 }
@@ -44,17 +92,17 @@ void Limpar_Tela()//limpar a tela a cada execução
 void Cadastro_Cliente()//cadastrar um cliente
 {
     printf("Nome:\n");
-    scanf(" %s",i_nome);
+    scanf(" %s", i_Nome);
     printf("CPF:\n");
-    scanf(" %s",i_CPF);
+    scanf(" %s", i_CPF);
     printf("Cidade:\n");
-    scanf(" %s",i_Cidade);
+    scanf(" %[^\n]s", i_Cidade);
     printf("Veiculo:\n");
-    scanf(" %s",i_Veiculo);
+    scanf(" %s", i_Veiculo);
     printf("Data de Nascimento:\n");
-    scanf(" %s",i_DataNasc);
+    scanf(" %s", i_DataNasc);
     printf("Telefone:\n");
-    scanf(" %s",i_Telefone);
+    scanf(" %s", i_Telefone);
 
     printf("Deseja salvar este cadastro?\n S / N:\n");
     char l_Salvar,l_opcao;
@@ -68,29 +116,29 @@ void Cadastro_Cliente()//cadastrar um cliente
         opcao();
     }
 }
-void Orcamento()//imprimir orçamentos
+void Orcamento()//imprimir orï¿½amentos
 {
     printf("Nome Cliente:\n");
-    scanf(" %s",i_nome);
+    scanf(" %s",i_Nome);
     printf("Veiculo:\n");
     scanf(" %s",i_Veiculo);
-    printf("Informe quantidade de peças:\n");
+    printf("Informe quantidade de peï¿½as:\n");
     int i,peca;
     double valor=0,v, mao_de_obra;
     scanf("%d",&peca);
     for(i=1;i<=peca;i++)
     {
-        printf("Peça %d valor R$:\n",i);
+        printf("Peï¿½a %d valor R$:\n",i);
         scanf("%lf",&v);
         valor+=v;
         printf("...............................................\n");
     }
-    printf("Valor Mão de obra R$:\n");
+    printf("Valor Mï¿½o de obra R$:\n");
     scanf("%lf",&mao_de_obra);
 
     valor+= mao_de_obra;
     printf("Total................................. R$%.2lf\n",valor);
-    printf("Deseja imprimir o orçamento? S/N\n");
+    printf("Deseja imprimir o orï¿½amento? S/N\n");
     char op;
     scanf(" %c",&op);
     if(op=='s'||op=='S')
@@ -101,7 +149,7 @@ void Orcamento()//imprimir orçamentos
         Menu();
     }
 }
-void Imprimir()//iprimir o orçamento
+void Imprimir()//iprimir o orï¿½amento
 {
 
 }
@@ -113,19 +161,15 @@ void Apagar_Cadastros()//apagar todos os cadastros
 {
 
 }
-void Salvar()//salvar cadastros realizados
-{
-
-}
 
 void Menu()//menu principal
 {
     int escolha;
-    printf("Escolha uma opção desejada;\n");
+    printf("Escolha uma opï¿½ï¿½o desejada;\n");
     printf("1- Cadastro Cliente:\n");
     printf("2- Mostrar todos os cadastros:\n");
     printf("3- Apagar todos os cadastros;\n");
-    printf("4- Fazer orçamento:\n");
+    printf("4- Fazer orï¿½amento:\n");
     printf("5- Sair:\n");
     scanf("%d",&escolha);
 
@@ -144,13 +188,9 @@ void Menu()//menu principal
     case (5):
         break;
 
-        /* printf("Favor selecionar uma opção:")
+        /* printf("Favor selecionar uma opï¿½ï¿½o:")
          Menu();*/
     }
 }
 
-int main()//execuçao
-{
-    Menu();
-    return 0;
-}
+
