@@ -47,13 +47,30 @@ int main (void){
 
 void Salvar()//salvar cadastros realizados, colocado aqui pra deixar pré carregando quando for chamado
 {
+    char *Nome;
+    char *CPF;
+    char *Cidade;
+    char *Veiculo;
+    char *DataNasc;
+    char *Telefone;
+
+    Nome = &i_Nome;
+    CPF = &i_CPF;
+    Cidade = &i_Cidade;
+    Veiculo = &i_Veiculo;
+    DataNasc = &i_DataNasc;
+    Telefone = &i_Telefone;
+
     MYSQL conexao;
-    char res;
+    char query[200];
+
     mysql_init(&conexao);
     if(mysql_real_connect(&conexao, "127.0.0.1", "root", "", "APSALG2", 0, NULL, 0)){
-        printf("Conectado com sucesso!n");
-        res = mysql_query(&conexao,"INSERT INTO Clientes(i_Nome, i_CPF, i_Cidade, i_Veiculo, i_DataNasc, i_Telefone) values('leonardo', '212121', 'beltrao', 'fuke', 'sa', '1212121');");
-        if (!res){
+        printf("Conectado com sucesso!\n");
+        //printf("INSERT INTO Clientes(i_Nome, i_CPF, i_Cidade, i_Veiculo, i_DataNasc, i_Telefone) values(%s, %s, %s, %s, %s, %s);", Nome, CPF, Cidade, Veiculo, DataNasc, Telefone);
+        sprintf(query,"INSERT INTO clientes(i_Nome, i_CPF, i_Cidade, i_Veiculo, i_DataNasc, i_Telefone) values('%s', '%s', '%s', '%s', '%s', '%s');", Nome, CPF, Cidade, Veiculo, DataNasc, Telefone);
+
+       if (!mysql_query(&conexao, query)){
             printf("Registros inseridos %d", mysql_affected_rows(&conexao));
         }
         else{
